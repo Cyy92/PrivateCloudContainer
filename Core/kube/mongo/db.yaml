@@ -1,0 +1,296 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data-volume-1
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: "/mongo/data/container-search-system-db"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kube-master
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: logs-volume-1
+spec:
+  storageClassName: local-storage
+  capacity:
+    storage: 10Gi
+  volumeMode: Filesystem
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  local:
+    path: "/mongo/logs/container-search-system-db"
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - kube-master
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-volume-container-search-system-db-0
+  namespace: mongo
+spec:
+  volumeName: data-volume-1
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: logs-volume-container-search-system-db-0
+  namespace: mongo
+spec:
+  volumeName: logs-volume-1
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+---
+# This example deploys a 3 members ReplicaSet with HostPath volumes
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+  name: container-search-system-db
+  namespace: mongo
+spec:
+  members: 1
+  security:
+    authentication:
+      modes:
+      - SCRAM
+    roles: # Custom roles
+      - role: userRole-col-container-preinfo
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: containerPreInfo
+            actions:
+              - insert
+              - find
+              - update
+        roles: 
+          - name: read
+            db: container-search-system
+      - role: userRole-col-danger-info
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: dangerInfo
+            actions:
+              - insert
+              - find
+              - update
+        roles:
+          - name: read
+            db: container-search-system
+      - role: userRole-col-md-manager
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: mdManager
+            actions:
+              - insert
+              - find
+              - update
+        roles:
+          - name: read
+            db: container-search-system
+      - role: userFindRole-col-container-preinfo
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: containerPreInfo
+            actions:
+              - find
+        roles:
+          - name: read
+            db: container-search-system
+      - role: userFindRole-col-danger-info
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: dangerInfo
+            actions:
+              - find
+        roles:
+          - name: read
+            db: container-search-system
+      - role: userFindRole-col-md-manager
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: mdManager
+            actions:
+              - find
+        roles:
+          - name: read
+            db: container-search-system
+      - role: userFindRole-col-workingset-info
+        db: container-search-system
+        privileges:
+          - resource:
+              db: container-search-system
+              collection: workingsetInfo
+            actions:
+              - find
+        roles:
+          - name: read
+            db: container-search-system
+  statefulSet:
+    spec:
+      initContainers:
+      - command:
+        - chown
+        - -R
+        - "2000"
+        - /data
+        image: busybox
+        volumeMounts:
+        - mountPath: /data
+          name: data-volume
+        securityContext:
+          runAsNonRoot: false
+          runAsUser: 0
+          runAsGroup: 0
+        name: change-dir-permissions
+      #securityContext:
+      #  runAsNonRoot: false
+      #  runAsUser: 0
+      #  runAsGroup: 0
+      #serviceName: container-search-system-db-svc
+      volumes:
+      - name: data-volume
+        persistentVolumeClaim:
+          claimName: data-volume-container-search-system-db-0
+      - name: logs-volume
+        persistentVolumeClaim:
+          claimName: logs-volume-container-search-system-db-0
+  type: ReplicaSet
+  users:
+    - name: admin
+      db: container-search-system
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: admin-password
+      roles:
+        - name: dbOwner
+          db: container-search-system
+      scramCredentialsSecretName: admin-scram
+    - name: preinfo
+      db: container-search-system
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: user-preinfo-password
+      roles:
+        - name: userRole-col-container-preinfo
+          db: container-search-system
+        - name: userRole-col-md-manager
+          db: container-search-system
+        - name: userFindRole-col-workingset-info
+          db: container-search-system
+      scramCredentialsSecretName: tos-scram
+    - name: danger
+      db: container-search-system
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: user-danger-password
+      roles:
+        - name: userRole-col-danger-info
+          db: container-search-system
+      scramCredentialsSecretName: danger-scram
+    - name: updater
+      db: container-search-system
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: user-updater-password
+      roles:
+        - name: userRole-col-md-manager
+          db: container-search-system
+      scramCredentialsSecretName: updater-scram
+    - name: searcher
+      db: container-search-system
+      passwordSecretRef: # a reference to the secret that will be used to generate the user's password
+        name: user-searcher-password
+      roles:
+        - name: userFindRole-col-container-preinfo
+          db: container-search-system
+        - name: userFindRole-col-danger-info
+          db: container-search-system
+        - name: userFindRole-col-md-manager
+          db: container-search-system
+      scramCredentialsSecretName: searcher-scram
+  version: 4.4.0
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: admin-password
+  namespace: mongo
+type: Opaque
+stringData:
+  password: admin
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: user-preinfo-password
+  namespace: mongo
+type: Opaque
+stringData:
+  password: yourpassword
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: user-danger-password
+  namespace: mongo
+type: Opaque
+stringData:
+  password: yourpassword
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: user-updater-password
+  namespace: mongo
+type: Opaque
+stringData:
+  password: yourpassword
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: user-searcher-password
+  namespace: mongo
+type: Opaque
+stringData:
+  password: yourpassword
+
