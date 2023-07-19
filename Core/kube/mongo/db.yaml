@@ -19,7 +19,7 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - kube-master
+          - worker
 ---
 apiVersion: v1
 kind: PersistentVolume
@@ -42,13 +42,12 @@ spec:
         - key: kubernetes.io/hostname
           operator: In
           values:
-          - kube-master
+          - worker
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: data-volume-container-search-system-db-0
-  namespace: mongo
 spec:
   volumeName: data-volume-1
   storageClassName: local-storage
@@ -62,7 +61,6 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: logs-volume-container-search-system-db-0
-  namespace: mongo
 spec:
   volumeName: logs-volume-1
   storageClassName: local-storage
@@ -77,7 +75,6 @@ apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
   name: container-search-system-db
-  namespace: mongo
 spec:
   members: 1
   security:
@@ -253,7 +250,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: admin-password
-  namespace: mongo
 type: Opaque
 stringData:
   password: admin
@@ -262,7 +258,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: user-preinfo-password
-  namespace: mongo
 type: Opaque
 stringData:
   password: yourpassword
@@ -271,7 +266,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: user-danger-password
-  namespace: mongo
 type: Opaque
 stringData:
   password: yourpassword
@@ -280,7 +274,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: user-updater-password
-  namespace: mongo
 type: Opaque
 stringData:
   password: yourpassword
@@ -289,7 +282,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: user-searcher-password
-  namespace: mongo
 type: Opaque
 stringData:
   password: yourpassword

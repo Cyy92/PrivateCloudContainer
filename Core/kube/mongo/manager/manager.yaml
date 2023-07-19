@@ -6,7 +6,7 @@ metadata:
   labels:
     owner: mongodb
   name: mongodb-kubernetes-operator
-  namespace: privatecontainer
+  namespace: pcc
 spec:
   replicas: 1
   selector:
