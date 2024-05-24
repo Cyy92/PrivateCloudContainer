@@ -7,8 +7,8 @@ functions:
       dir: ./src
       file: ""
       name: Handler
-    docker_registry: 10.0.0.255:5000/2020_privatecloud
-    image: 10.0.0.255:5000/2020_privatecloud/danger-trigger
+    docker_registry: 10.0.1.150:5000/cyy
+    image: 10.0.1.150:5000/cyy/danger-trigger
     constraints:
     - nodetype=cpunode
     limits:
@@ -20,4 +20,4 @@ functions:
       cpu: 50m
       gpu: ""
 openfx:
-  gateway: 10.0.0.116:31113
+  gateway: 10.0.2.101:31113
