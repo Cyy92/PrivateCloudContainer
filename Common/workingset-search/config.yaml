@@ -1,0 +1,23 @@
+functions:
+  workingset-search:
+    runtime: go
+    desc: ""
+    maintainer: ""
+    handler:
+      dir: ./src
+      file: ""
+      name: Handler
+    docker_registry: 10.0.0.255:5000/2020_privatecloud
+    image: 10.0.0.255:5000/2020_privatecloud/workingset-search
+    constraints:
+    - nodetype=cpunode
+    limits:
+      memory: ""
+      cpu: ""
+      gpu: ""
+    requests:
+      memory: 50Mi
+      cpu: 50m
+      gpu: ""
+openfx:
+  gateway: 10.0.0.116:31113
