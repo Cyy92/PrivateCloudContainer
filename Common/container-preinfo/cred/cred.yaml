@@ -1,0 +1,6 @@
+authentication:
+  mongodb:
+    uri: mongodb://container-search-system-db-0.container-search-system-db-svc.mongo.svc.cluster.local:27017
+    user: preinfo
+    pw: yourpassword
+    db: container-search-system

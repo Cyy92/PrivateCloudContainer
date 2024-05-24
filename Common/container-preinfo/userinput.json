@@ -1,0 +1,34 @@
+{
+	"obj_data": [
+		{
+			"base64_file": "UEsDBAoAAAAAAI1ZAlWtANTtFQAAABUAAAAOABwAdGVzdDA4MDItMS50eHRVVAkAAwqI6GIUiOhidXgLAAEEAAAAAAQAAAAAVG9kYXkgaXMgMDgtMDIsIDIwMjIKUEsBAh4DCgAAAAAAjVkCVa0A1O0VAAAAFQAAAA4AGAAAAAAAAQAAAKSBAAAAAHRlc3QwODAyLTEudHh0VVQFAAMKiOhidXgLAAEEAAAAAAQAAAAAUEsFBgAAAAABAAEAVAAAAF0AAAAAAA==",
+			"obj_name": "test0812-1.zip"
+		},
+
+		{
+			"base64_file": "UEsDBAoAAAAAAJJZAlWtANTtFQAAABUAAAAOABwAdGVzdDA4MDItMi50eHRVVAkAAxSI6GIUiOhidXgLAAEEAAAAAAQAAAAAVG9kYXkgaXMgMDgtMDIsIDIwMjIKUEsBAh4DCgAAAAAAklkCVa0A1O0VAAAAFQAAAA4AGAAAAAAAAQAAAKSBAAAAAHRlc3QwODAyLTIudHh0VVQFAAMUiOhidXgLAAEEAAAAAAQAAAAAUEsFBgAAAAABAAEAVAAAAF0AAAAAAA==",
+                        "obj_name": "test0812-2.zip"
+		}
+	],
+	"meta_data": {
+		"container_num": "AAA001",
+		"unloading_date": "2022-08-12",
+		"trailer_num": "123",
+		"loading_port": "keti",
+		"discharge_port": "human",
+		"in_out": "in",
+		"container_size": "456",
+		"container_type": "con",
+		"full_empty": "full",
+		"shipping_company": "it",
+		"yardlocation": "seoul",
+		"temperature": "24",
+		"container_weight": "789",
+		"sealnum": "000"
+	},
+	"related_works": [
+		{
+			"code": "DA001"
+		}
+	]
+}
