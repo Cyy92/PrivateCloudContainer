@@ -1,5 +1,5 @@
 authentication:
   minio:
-    ep: 10.0.0.116:32170
+    ep: 10.0.1.101:32170
     accesskey: minioadmin
     secretkey: minioadmin
